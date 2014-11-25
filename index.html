@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Phish Countdown</title>
+	<link href='http://fonts.googleapis.com/css?family=Raleway:900' rel='stylesheet' type='text/css'>
+	<link rel="icon" href="images/phishFavicon.png" type="image/x-icon" />
+	<style>
+		body {
+			text-align:center;
+			background-color: seagreen;
+			font-family: "Raleway", helvetica, sans-serif;
+			color:#f0faf5;
+			font-size: 30px;
+			margin:55px auto;
+		}
+
+		h1 {
+			font-size: 25px;
+			margin:0;
+		}
+
+		p {
+			margin:0;
+		}
+
+		p.date {
+			font-size: 70px;
+			margin:30px;
+		}
+
+	</style>
+</head>
+<body>
+	<h1>The next Phish show is:</h1>
+	<p class="date"></p>
+	<p>at</p>
+	<p class="venue"></p>
+	<p><span class="city"></span>, <span class="state"></span></p>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script>
+		var countdownWidget = {
+			
+			countdownData: {},
+
+			init: function() {
+				$.ajax({
+					url: "https://api.phish.net/api.js?api=2.0&method=pnet.shows.upcoming&format=json&apikey=A0638C88BA52187F4954",
+					type: "GET",
+					dataType: "jsonp",
+					success: countdownWidget.parseData
+				});
+			},
+
+			parseData: function(responseData) {
+				console.log(responseData);
+				countdownWidget.countdownData.days = responseData[0].relativetime;
+				countdownWidget.countdownData.city = responseData[0].city;
+				countdownWidget.countdownData.state = responseData[0].state;
+				countdownWidget.countdownData.venue = responseData[0].venuename;
+				countdownWidget.updateDOM();
+			},
+
+			updateDOM: function() {	
+				$("p.date").text(countdownWidget.countdownData.days);
+				$("span.city").text(countdownWidget.countdownData.city);
+				$("span.state").text(countdownWidget.countdownData.state);
+				$("p.venue").text(countdownWidget.countdownData.venue);
+			}
+		}
+
+		$(document).ready(function(){
+		  countdownWidget.init();
+		});
+	</script>
+</body>
+</html>
